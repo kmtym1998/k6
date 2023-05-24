@@ -163,38 +163,25 @@ type Config struct {
 // NewConfig creates a new Config instance with default values for some fields.
 func NewConfig() Config {
 	return Config{
+		APIVersion:            null.NewInt(2, false),
 		Host:                  null.NewString("https://ingest.k6.io", false),
 		LogsTailURL:           null.NewString("wss://cloudlogs.k6.io/api/v1/tail", false),
 		WebAppURL:             null.NewString("https://app.k6.io", false),
 		MetricPushInterval:    types.NewNullDuration(1*time.Second, false),
 		MetricPushConcurrency: null.NewInt(1, false),
+		Timeout:               types.NewNullDuration(1*time.Minute, false),
 
-		TracesEnabled:         null.NewBool(false, false),
-		TracesHost:            null.NewString("insights.k6.io:4443", false),
-		TracesPushInterval:    types.NewNullDuration(1*time.Second, false),
-		TracesPushConcurrency: null.NewInt(1, false),
-
-		MaxMetricSamplesPerPackage: null.NewInt(100000, false),
-		Timeout:                    types.NewNullDuration(1*time.Minute, false),
-		APIVersion:                 null.NewInt(1, false),
+		AggregationPeriod:     types.NewNullDuration(3*time.Second, false),
+		AggregationWaitPeriod: types.NewNullDuration(8*time.Second, false),
 
 		// The set value (1000) is selected for performance reasons.
 		// Any change to this value should be first discussed with internal stakeholders.
 		MaxTimeSeriesInBatch: null.NewInt(1000, false),
 
-		// Aggregation is disabled by default, since AggregationPeriod has no default value
-		// but if it's enabled manually or from the cloud service, those are the default values it will use:
-		AggregationCalcInterval:         types.NewNullDuration(3*time.Second, false),
-		AggregationWaitPeriod:           types.NewNullDuration(5*time.Second, false),
-		AggregationMinSamples:           null.NewInt(25, false),
-		AggregationOutlierAlgoThreshold: null.NewInt(75, false),
-		AggregationOutlierIqrRadius:     null.NewFloat(0.25, false),
-
-		// Since we're measuring durations, the upper coefficient is slightly
-		// lower, since outliers from that side are more interesting than ones
-		// close to zero.
-		AggregationOutlierIqrCoefLower: null.NewFloat(1.5, false),
-		AggregationOutlierIqrCoefUpper: null.NewFloat(1.3, false),
+		TracesEnabled:         null.NewBool(false, false),
+		TracesHost:            null.NewString("insights.k6.io:4443", false),
+		TracesPushInterval:    types.NewNullDuration(1*time.Second, false),
+		TracesPushConcurrency: null.NewInt(1, false),
 	}
 }
 
