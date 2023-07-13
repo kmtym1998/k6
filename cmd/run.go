@@ -36,12 +36,13 @@ import (
 	"go.k6.io/k6/ui/pb"
 )
 
-// cmdRun handles the `k6 run` sub-command
-type cmdRun struct {
+// cmdsRunAndAgent handles the `k6 run` and `k6 agent` sub-commands
+type cmdsRunAndAgent struct {
 	gs *state.GlobalState
 
 	// TODO: figure out something more elegant?
 	loadConfiguredTest func(cmd *cobra.Command, args []string) (*loadedAndConfiguredTest, execution.Controller, error)
+	testEndHook        func(err error)
 }
 
 // We use an excessively high timeout to wait for event processing to complete,
@@ -53,13 +54,16 @@ const waitEventDoneTimeout = 30 * time.Minute
 // TODO: split apart some more
 //
 //nolint:funlen,gocognit,gocyclo,cyclop
-func (c *cmdRun) run(cmd *cobra.Command, args []string) (err error) {
+func (c *cmdsRunAndAgent) run(cmd *cobra.Command, args []string) (err error) {
 	var logger logrus.FieldLogger = c.gs.Logger
 	defer func() {
 		if err == nil {
 			logger.Debug("Everything has finished, exiting k6 normally!")
 		} else {
 			logger.WithError(err).Debug("Everything has finished, exiting k6 with an error!")
+		}
+		if c.testEndHook != nil {
+			c.testEndHook(err)
 		}
 	}()
 	printBanner(c.gs)
@@ -392,7 +396,7 @@ func (c *cmdRun) run(cmd *cobra.Command, args []string) (err error) {
 	return nil
 }
 
-func (c *cmdRun) flagSet() *pflag.FlagSet {
+func (c *cmdsRunAndAgent) flagSet() *pflag.FlagSet {
 	flags := pflag.NewFlagSet("", pflag.ContinueOnError)
 	flags.SortFlags = false
 	flags.AddFlagSet(optionFlagSet())
@@ -402,7 +406,7 @@ func (c *cmdRun) flagSet() *pflag.FlagSet {
 }
 
 func getCmdRun(gs *state.GlobalState) *cobra.Command {
-	c := &cmdRun{
+	c := &cmdsRunAndAgent{
 		gs: gs,
 		loadConfiguredTest: func(cmd *cobra.Command, args []string) (*loadedAndConfiguredTest, execution.Controller, error) {
 			test, err := loadAndConfigureLocalTest(gs, cmd, args, getConfig)
