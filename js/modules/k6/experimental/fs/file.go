@@ -51,3 +51,8 @@ func (f *file) Read(into []byte) (int, error) {
 
 	return n, nil
 }
+
+// ReadAll reads the entire file into memory.
+func (f *file) ReadAll() []byte {
+	return f.data
+}
