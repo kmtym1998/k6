@@ -208,3 +208,15 @@ func (f *File) Read(into goja.Value) *goja.Promise {
 
 	return promise
 }
+
+// ReadAll reads the entire content of the file into memory and returns a
+// promise that will resolve to an ArrayBuffer containing the file's content.
+func (f *File) ReadAll() *goja.Promise {
+	promise, resolve, _ := promises.New(f.vu)
+
+	go func() {
+		resolve(f.vu.Runtime().NewArrayBuffer(f.file.ReadAll()))
+	}()
+
+	return promise
+}
