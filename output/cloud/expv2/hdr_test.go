@@ -33,12 +33,15 @@ func TestResolveBucketIndex(t *testing.T) {
 		{in: 282.29, exp: 269},
 		{in: 1029, exp: 512},
 		{in: 39751, exp: 1179},
+		{in: 182272, exp: 1458},
+		{in: 183000, exp: 1458},
+		{in: 184000, exp: 1459},
 		{in: (1 << 30) - 1, exp: 3071},
 		{in: (1 << 30), exp: 3072},
 		{in: math.MaxInt32, exp: 3199},
 	}
 	for _, tc := range tests {
-		assert.Equal(t, tc.exp, resolveBucketIndex(tc.in), tc.in)
+		assert.Equal(t, int(tc.exp), int(resolveBucketIndex(tc.in)), int(tc.in))
 	}
 }
 

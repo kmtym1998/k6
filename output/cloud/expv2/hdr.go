@@ -23,6 +23,9 @@ const (
 	// It should be a high enough
 	// and rationale value for the k6 context; 2^30 = 1_073_741_824
 	highestTrackable = 1 << 30
+
+	// TODO
+	minimumResolution = float64(.001)
 )
 
 // histogram represents a distribution
@@ -61,16 +64,13 @@ type histogram struct {
 
 	// Count is counts the amount of observed values.
 	Count uint32
-
-	MinResolution float64
 }
 
-func newHistogram(minResolution float64) *histogram {
+func newHistogram() *histogram {
 	return &histogram{
 		Buckets: make(map[uint32]uint32),
 		Max:     -math.MaxFloat64,
 		Min:     math.MaxFloat64,
-		MinResolution: minResolution,
 	}
 }
 
@@ -88,9 +88,7 @@ func (h *histogram) addToBucket(v float64) {
 	h.Count++
 	h.Sum += v
 
-	if h.MinResolution != 1.0 {
-		v = v / h.MinResolution
-	}
+	v = v / minimumResolution
 
 	if v > highestTrackable {
 		h.ExtraHighBucket++
@@ -144,13 +142,14 @@ func histogramAsProto(h *histogram, time int64) *pbcloud.TrendHdrValue {
 	}
 
 	hval := &pbcloud.TrendHdrValue{
-		Time:     timestampAsProto(time),
-		MinValue: h.Min,
-		MaxValue: h.Max,
-		Sum:      h.Sum,
-		Count:    h.Count,
-		Counters: counters,
-		Spans:    spans,
+		Time:          timestampAsProto(time),
+		MinValue:      h.Min,
+		MaxValue:      h.Max,
+		Sum:           h.Sum,
+		Count:         h.Count,
+		Counters:      counters,
+		Spans:         spans,
+		MinResolution: new(float64),
 	}
 	if h.ExtraLowBucket > 0 {
 		hval.ExtraLowValuesCounter = &h.ExtraLowBucket
@@ -158,9 +157,7 @@ func histogramAsProto(h *histogram, time int64) *pbcloud.TrendHdrValue {
 	if h.ExtraHighBucket > 0 {
 		hval.ExtraHighValuesCounter = &h.ExtraHighBucket
 	}
-	if h.MinResolution != 1.0 {
-	    hval.MinResolution = &h.MinResolution
-	}
+	*hval.MinResolution = minimumResolution
 	return hval
 }
 

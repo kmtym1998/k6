@@ -119,7 +119,7 @@ func (c *collector) collectSample(s metrics.Sample) {
 	// Get or create the bucket's sinks map per time series
 	sink, ok := bucket[s.TimeSeries]
 	if !ok {
-		sink = newMetricValue(s.Metric)
+		sink = newMetricValue(s.Metric.Type)
 		bucket[s.TimeSeries] = sink
 	}
 
