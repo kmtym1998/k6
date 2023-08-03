@@ -14,7 +14,7 @@ type file struct {
 }
 
 // Stat returns a FileInfo describing the named file.
-func (f *file) Stat() *FileInfo {
+func (f *file)stat() *FileInfo {
 	filename := filepath.Base(f.path)
 	return &FileInfo{Name: filename, Size: len(f.data)}
 }
