@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"bytes"
 	"testing"
 
 	"github.com/spf13/afero"
@@ -46,7 +47,7 @@ func TestFileRegistryOpen(t *testing.T) {
 		assert.Equal(t, []byte("Bonjour, le monde"), firstData)
 		assert.True(t, gotSecondOk)
 		assert.NoError(t, secondErr)
-		assert.Same(t, firstData, secondData)
+		assert.True(t, bytes.Equal(firstData, secondData))
 		assert.Equal(t, []byte("Bonjour, le monde"), secondData)
 	})
 }
