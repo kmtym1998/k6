@@ -160,7 +160,7 @@ func (f *File) Stat() *goja.Promise {
 	promise, resolve, _ := promises.New(f.vu)
 
 	go func() {
-		resolve(f.file.Stat())
+		resolve(f.file.stat())
 	}()
 
 	return promise

@@ -14,15 +14,12 @@ type file struct {
 }
 
 // Stat returns a FileInfo describing the named file.
-func (f *file)stat() *FileInfo {
+func (f *file) stat() *FileInfo {
 	filename := filepath.Base(f.path)
 	return &FileInfo{Name: filename, Size: len(f.data)}
 }
 
 // FileInfo holds information about a file.
-//
-// It is a wrapper around the [fileInfo] struct, which is meant to be directly
-// exposed to the JS runtime.
 type FileInfo struct {
 	// Name holds the base name of the file.
 	Name string `json:"name"`
