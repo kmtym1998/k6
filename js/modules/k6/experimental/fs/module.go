@@ -97,7 +97,7 @@ func (mi *ModuleInstance) openImpl(path string) (*File, error) {
 
 	fs, ok := initEnv.FileSystems["file"]
 	if !ok {
-		panic("open() failed; reason: unable to access the file system")
+		common.Throw(mi.vu.Runtime(), fmt.Errorf("open() failed; reason: unable to access the file system"))
 	}
 
 	if exists, err := fsext.Exists(fs, path); err != nil {
