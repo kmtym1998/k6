@@ -44,8 +44,9 @@ type registry struct {
 //
 // Returns:
 //   - A byte slice containing the content of the specified file.
-//   - An error if there's any issue opening or reading the file. If the file content is successfully cached and returned once,
-//     subsequent calls will not produce file-related errors for the same file, as the cached value will be used.
+//   - An error if there's any issue opening or reading the file. If the file content is
+//     successfully cached and returned once, subsequent calls will not produce
+//     file-related errors for the same file, as the cached value will be used.
 func (fr *registry) open(filename string, fromFs afero.Fs) ([]byte, error) {
 	filename = filepath.Clean(filename)
 

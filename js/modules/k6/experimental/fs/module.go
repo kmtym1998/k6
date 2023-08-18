@@ -3,6 +3,7 @@
 package fs
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/dop251/goja"
@@ -97,7 +98,7 @@ func (mi *ModuleInstance) openImpl(path string) (*File, error) {
 
 	fs, ok := initEnv.FileSystems["file"]
 	if !ok {
-		common.Throw(mi.vu.Runtime(), errrors.New("open() failed; reason: unable to access the file system"))
+		common.Throw(mi.vu.Runtime(), errors.New("open() failed; reason: unable to access the file system"))
 	}
 
 	if exists, err := fsext.Exists(fs, path); err != nil {
