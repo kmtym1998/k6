@@ -1,7 +1,5 @@
 package fs
 
-import "fmt"
-
 // newFsError creates a new Error object of the provided kind and with the
 // provided message.
 func newFsError(k errorKind, message string) *fsError {
@@ -56,5 +54,5 @@ var _ error = (*fsError)(nil)
 
 // Error implements the Go `error` interface.
 func (e *fsError) Error() string {
-	return fmt.Sprintf(e.Name + ": " + e.Message)
+	return e.Name + ": " + e.Message
 }

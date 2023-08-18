@@ -19,9 +19,9 @@ func TestFileRegistryOpen(t *testing.T) {
 			return afero.WriteFile(fs, "bonjour.txt", []byte("Bonjour, le monde"), 0o644)
 		})
 
-		_, gotBeforeOk := registry.files.Load("bonjour.txt")
+		_, gotBeforeOk := registry.openedFiles.Load("bonjour.txt")
 		gotData, gotErr := registry.open("bonjour.txt", fs)
-		_, gotAfterOk := registry.files.Load("bonjour.txt")
+		_, gotAfterOk := registry.openedFiles.Load("bonjour.txt")
 
 		assert.False(t, gotBeforeOk)
 		assert.NoError(t, gotErr)
@@ -38,9 +38,9 @@ func TestFileRegistryOpen(t *testing.T) {
 		})
 
 		firstData, firstErr := registry.open("bonjour.txt", fs)
-		_, gotFirstOk := registry.files.Load("bonjour.txt")
+		_, gotFirstOk := registry.openedFiles.Load("bonjour.txt")
 		secondData, secondErr := registry.open("bonjour.txt", fs)
-		_, gotSecondOk := registry.files.Load("bonjour.txt")
+		_, gotSecondOk := registry.openedFiles.Load("bonjour.txt")
 
 		assert.True(t, gotFirstOk)
 		assert.NoError(t, firstErr)
